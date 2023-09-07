@@ -35,7 +35,10 @@ I kept the application quite rudimentary
 - Caching.
   - This app could benefit from further improvements to data fetching. At the moment, I implemented pagination to prevent slow loading due to the amount of items(5000) its was fetching and trying to display at once. This solves the issue in our case but if we needed to scale, a cache would come in handy.
   
-
+### Limitation(s)
+- 1 user at a time
+    - Due to the way the simple authentication system is working, only 1 user can be created at a time.
+    - Use the delete account button once logged in to delete the user
 
 ## :rocket: Technologies ##
 
