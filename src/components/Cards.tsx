@@ -69,43 +69,39 @@ export default function Cards() {
     body: string,
   }
 
+  type CombinedApiData = Photo & Comment
+
   // We will combine both apis into 1 state variable
-  const [apiData, setApiData] = useState<any>([])
+  const [apiData, setApiData] = useState<CombinedApiData[]>([]) 
 
   useEffect(() => {
-    Promise.all([
-      fetch('https://jsonplaceholder.typicode.com/photos'),
-      fetch('https://jsonplaceholder.typicode.com/comments'),
-    ])
-      .then(([resPhotos, resComments]) =>
-        Promise.all([resPhotos.json(), resComments.json()])
-      )
-      .then(([photos, comments]) => {
+    const fetchData = async () => {
+      const responsePhotos = await fetch('https://jsonplaceholder.typicode.com/photos')
+      const responseComments = await fetch('https://jsonplaceholder.typicode.com/comments')
+      const photos: Photo[] = await responsePhotos.json()
+      const comments: Comment[] = await responseComments.json()
 
-        const combinedApiData = photos.map((photo: any) => {
-          const matchId = comments.find((comment: any) => comment.id === photo.id)
-          if (matchId) {
-            return { ...photo, ...matchId }
-          }
+      // Find matching ids and combine photos and comment object into 1
+      const combinedApiData = photos.map((photo: any) => {
+        const matchId = comments.find((comment: any) => comment.id === photo.id)
+        if (matchId) {
+          return { ...photo, ...matchId }
+        }
 
-          return photo
-        })
-
-        setApiData(combinedApiData)
+        return photo
+      
       })
-
-  }, [])
-
-
-  console.log(apiData)
-
-
+      setApiData(combinedApiData) 
+    }
+    fetchData()
+  },[])
+  // console.log(apiData)
 
   return (
     <>
       <div className="m-20">
         <ul role="list" className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {apiData.map((data: any) => (
+          {apiData.map((data) => (
             <li
               key={data.id}
               className="col-span-1 flex flex-col divide-y divide-gray-200 rounded-lg bg-white text-center shadow"
