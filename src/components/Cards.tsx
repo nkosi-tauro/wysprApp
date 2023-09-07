@@ -72,27 +72,33 @@ export default function Cards() {
   type CombinedApiData = Photo & Comment
 
   // We will combine both apis into 1 state variable
-  const [apiData, setApiData] = useState<CombinedApiData[]>([]) 
+  const [apiData, setApiData] = useState<CombinedApiData[]>([])
 
   useEffect(() => {
     const fetchData = async () => {
-      const responsePhotos = await fetch('https://jsonplaceholder.typicode.com/photos')
-      const responseComments = await fetch('https://jsonplaceholder.typicode.com/comments')
-      const photos: Photo[] = await responsePhotos.json()
-      const comments: Comment[] = await responseComments.json()
+      try {
+        const responsePhotos = await fetch('https://jsonplaceholder.typicode.com/photos')
+        const responseComments = await fetch('https://jsonplaceholder.typicode.com/comments')
+        const photos: Photo[] = await responsePhotos.json()
+        const comments: Comment[] = await responseComments.json()
 
-      // Find matching ids and combine photos and comment object into 1
-      const combinedApiData = photos.map((photo: any) => {
-        const matchId = comments.find((comment: any) => comment.id === photo.id)
-        if (matchId) {
-          return { ...photo, ...matchId }
-        }
+        // Find matching ids and combine photos and comment object into 1
+        const combinedApiData = photos.map((photo: any) => {
+          const matchId = comments.find((comment: any) => comment.id === photo.id)
+          if (matchId) {
+            return { ...photo, ...matchId }
+          }
 
-        return photo
-      
-      })
-      setApiData(combinedApiData) 
+          return photo
+
+        })
+        setApiData(combinedApiData)
+      }
+      catch (error) {
+        console.log(`An error has occured while trying to fetch data \n Error message: ${error} \n`)
+      }
     }
+
     fetchData()
   },[])
   // console.log(apiData)
