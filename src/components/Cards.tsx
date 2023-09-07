@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import Paginate from './Pagination'
 import Pagination from './Pagination'
 
 export default function Cards() {
