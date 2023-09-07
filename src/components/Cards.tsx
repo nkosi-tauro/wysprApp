@@ -1,56 +1,6 @@
 import { useState, useEffect } from 'react'
-
-const people = [
-  {
-    name: 'Jane Cooper',
-    title: 'Paradigm Representative',
-    role: 'Admin',
-    email: 'janecooper@example.com',
-    telephone: '+1-202-555-0170',
-    imageUrl:
-      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60',
-  },
-  {
-    name: 'Jane Cooper',
-    title: 'Paradigm Representative',
-    role: 'Admin',
-    email: 'janecooper@example.com',
-    telephone: '+1-202-555-0170',
-    imageUrl:
-      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60',
-  },
-  {
-    name: 'Jane Cooper',
-    title: 'Paradigm Representative',
-    role: 'Admin',
-    email: 'janecooper@example.com',
-    telephone: '+1-202-555-0170',
-    imageUrl:
-      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60',
-  },
-  {
-    name: 'Jane Cooper',
-    title: 'Paradigm Representative',
-    role: 'Admin',
-    email: 'janecooper@example.com',
-    telephone: '+1-202-555-0170',
-    imageUrl:
-      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60',
-  },
-  {
-    name: 'Jane Cooper',
-    title: 'Paradigm Representative',
-    role: 'Admin',
-    email: 'janecooper@example.com',
-    telephone: '+1-202-555-0170',
-    imageUrl:
-      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60',
-  },
-  // More people...
-]
-
-
-
+import Paginate from './Pagination'
+import Pagination from './Pagination'
 
 export default function Cards() {
   type Photo = {
@@ -73,6 +23,26 @@ export default function Cards() {
 
   // We will combine both apis into 1 state variable
   const [apiData, setApiData] = useState<CombinedApiData[]>([])
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1)
+  const [photosPerPage] = useState(12)
+
+  const indexOfLastPhoto = currentPage * photosPerPage;
+  const indexOfFirstPhoto = indexOfLastPhoto - photosPerPage;
+  const currentPhoto = apiData.slice(indexOfFirstPhoto, indexOfLastPhoto);
+
+  const previousPage = () => {
+    if (currentPage !== 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const nextPage = () => {
+    if (currentPage !== Math.ceil(apiData.length / photosPerPage)) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -100,14 +70,14 @@ export default function Cards() {
     }
 
     fetchData()
-  },[])
+  }, [])
   // console.log(apiData)
 
   return (
     <>
       <div className="m-20">
         <ul role="list" className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {apiData.map((data) => (
+          {currentPhoto.map((data) => (
             <li
               key={data.id}
               className="col-span-1 flex flex-col divide-y divide-gray-200 rounded-lg bg-white text-center shadow"
@@ -120,6 +90,13 @@ export default function Cards() {
           ))}
         </ul>
       </div>
+      <Pagination
+        indexOfFirstPhoto={indexOfFirstPhoto}
+        indexOfLastPhoto={indexOfLastPhoto}
+        totalPhotos={apiData.length}
+        previousPage={previousPage}
+        nextPage={nextPage}
+      />
     </>
   )
 }
