@@ -1,13 +1,11 @@
-import { useState } from 'react'
+import SignUp from "./components/SignUp"
 
 
 function App() {
 
   return (
     <>
-      <p className=" text-red-500">
-        Test
-      </p>
+      <SignUp/>
     </>
   )
 }
